@@ -1,27 +1,78 @@
+<script setup lang="ts">
+const loginError = ref<string | null>(null)
+const registerError = ref<string | null>(null)
+
+const { user } = useUser()
+
+const login = async (e: Event) => {
+  loginError.value = null
+  const fd = Object.fromEntries(new FormData(e.target as HTMLFormElement))
+  try {
+    const res = await $fetch('/api/login', {
+      method: 'POST',
+      body: JSON.stringify(fd),
+    })
+    user.value = res.user
+  } catch (_e) {
+    const e = _e as Error
+    loginError.value = e.message
+  }
+}
+
+const register = async (e: Event) => {
+  loginError.value = null
+  const fd = Object.fromEntries(new FormData(e.target as HTMLFormElement))
+  try {
+    const res = await $fetch('/api/register', {
+      method: 'POST',
+      body: JSON.stringify(fd),
+    })
+    user.value = res.user
+  } catch (_e) {
+    const e = _e as Error
+    loginError.value = e.message
+  }
+}
+
+const logout = async () => {
+  await $fetch('/api/logout')
+  user.value = null
+}
+</script>
+
 <template>
   <main class="body-container">
-    <section>
+    <section v-if="!user">
       <div class="lk-form-container">
         <div class="lk-form">
           <h2 style="text-align: center">Авторизация</h2>
-          <form>
-            <input type="mail" placeholder="Почта" />
-            <input type="password" placeholder="Пароль" />
+          <form @submit.prevent="login">
+            <input type="mail" name="email" placeholder="Почта" />
+            <input type="password" name="password" placeholder="Пароль" />
+            {{ loginError }}
             <button>Войти</button>
           </form>
         </div>
         <div class="lk-form">
           <h2 style="text-align: center">Регистрация</h2>
-          <form>
-            <input type="text" placeholder="Ваше имя" />
-            <input type="text" placeholder="Номер телефона" />
-            <input type="mail" placeholder="Почта" />
-            <input type="password" placeholder="Пароль" />
-            <input type="password" placeholder="Повторите пароль" />
+          <form @submit.prevent="register">
+            <input type="text" name="name" placeholder="Ваше имя" />
+            <input type="text" name="phone" placeholder="Номер телефона" />
+            <input type="mail" name="email" placeholder="Почта" />
+            <input type="password" name="password" placeholder="Пароль" />
+            <input type="password" name="confirmPassword" placeholder="Повторите пароль" />
+            {{ registerError }}
             <button>Зарегистрироваться</button>
           </form>
         </div>
       </div>
+    </section>
+    <section class="lk-form logged-in" v-else>
+      <span>{{ user.name }}</span>
+      <span>{{ user.phone }}</span>
+      <span>{{ user.email }}</span>
+
+      <button @click="logout">Выйти</button>
     </section>
   </main>
 </template>
@@ -88,5 +139,19 @@ textarea {
 }
 .lk-form button:active {
   background-color: #448119;
+}
+
+.lk-error {
+  color: red;
+}
+
+.logged-in {
+  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 15px;
+  width: 400px;
+  margin-inline: auto;
 }
 </style>

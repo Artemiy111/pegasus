@@ -25,15 +25,9 @@
 </template>
 
 <style scoped>
-/* Футер */
 .footer {
   display: flex;
   flex-direction: row;
-  /* background-color: rgb(171, 172, 173); */
-  /* position: fixed;
-   right: 0;
-   bottom: 0; */
-  width: 99%;
   height: 90px;
   margin-top: 15px;
 

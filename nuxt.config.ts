@@ -6,6 +6,10 @@ export default defineNuxtConfig({
   future: {
     compatibilityVersion: 4
   },
+  experimental: {
+    typedPages: true,
+    componentIslands: true
+  },
 
   modules: ['@nuxt/fonts'],
 })

@@ -1,4 +1,12 @@
+
+
 body {
+  margin: 0;
   font-family: 'Open Sans', sans-serif;
   background: rgb(241 245 246);
+}
+
+.body-container {
+  width: min(100% - 2 * 40px, 1100px);
+  margin-inline: auto;
 }

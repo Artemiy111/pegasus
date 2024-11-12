@@ -9,17 +9,31 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "lint:style": "stylelint '**/*.{css,vue}'",
-    "lint:style:fix": "stylelint '**/*.{css,vue}' --fix"
+    "lint:style:fix": "stylelint '**/*.{css,vue}' --fix",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:push": "drizzle-kit push",
+    "db:drop": "drizzle-kit drop",
+    "db:seed": "tsx ./server/db/seed.ts"
   },
   "dependencies": {
     "@nuxt/fonts": "^0.10.2",
+    "argon2": "^0.41.1",
+    "better-sqlite3": "^11.5.0",
+    "drizzle-orm": "^0.36.1",
+    "jose": "^5.9.6",
     "nuxt": "^3.14.159",
+    "slugify": "^1.6.6",
     "vue": "latest",
-    "vue-router": "latest"
+    "vue-router": "latest",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@types/better-sqlite3": "^7.6.11",
+    "drizzle-kit": "^0.28.0",
     "stylelint": "^16.10.0",
     "stylelint-config-clean-order": "^6.1.0",
-    "stylelint-config-recommended-vue": "^1.5.0"
+    "stylelint-config-recommended-vue": "^1.5.0",
+    "tsx": "^4.19.2"
   }
 }

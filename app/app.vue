@@ -21,9 +21,18 @@ useHead({
 </script>
 
 <template>
-  <div class="">
+  <div class="wrapper">
     <TheHeader />
     <NuxtPage />
     <TheFooter />
   </div>
 </template>
+
+<style scoped>
+.wrapper {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto 1fr auto;
+  min-height: 100dvh;
+}
+</style>
