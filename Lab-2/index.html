@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link rel = "stylesheet" href = "css/style.css"> 
+		<link rel="icon" href="images/favicon.ico" type="image/x-icon">
+		<title>ПЕГАС Туристик</title>
+		<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script> 
+	</head>
+
+	<header>
+		<nav class = "navbar">
+			<div class = "container">
+				<a href = "index.html" class = "navbar-brand">
+					<img src="images/logo.png" width="324px" height="70px"/>
+				</a>
+
+				<div class = "navbar-wrap">
+				
+					<ul class = "navbar-menu">
+						<li><a href="index.html">Главная</a></li>
+						<li><a href="tours.html">Туры</a></li>
+						<li><a href="payments.html">Оплата</a></li>
+						<li><a href="contacts.html">Контакты</a></li>
+						<li><a href="about_us.html">О нас</a></li>
+					</ul>	
+					<a href = "lk.html" class = "lk">Личный кабинет</a>
+				</div>
+
+			</div>
+		</nav>
+			
+	</header>
+
+		
+	<body>
+		<div class = "body-container">
+			<section>
+				<div class = "search">
+					<form>
+						<div class = "search-container">
+							<div class = "search-where-form">
+								<div>
+									<p>Откуда</p>
+									<select class = "search-where" id = "selectWhere">
+										<option selected>Москва</option>
+										<option>Санкт-Петербург</option>
+										<option>Казань</option>
+										<option>Севастополь</option>
+										<option>Нижний Новгород</option>
+										<option>Калуга</option>
+										<option>Великий Новгород</option>
+										<option>Ярославль</option>
+									</select>
+								</div>
+								<div>
+									<p>Куда</p>
+									<select class = "search-where" id = "selectThere">
+										<option selected>Анталия</option>
+										<option>Пхукет</option>
+										<option>Бали</option>
+										<option>Гагры</option>
+										<option>Сочи</option>
+										<option>Анапа</option>
+										<option>Дубай</option>
+									</select>
+								</div>
+							</div>
+							<div class = "search-date-form"> 
+								<div>
+									<p>Дата вылета</p>
+									<input class = "date-form" type="date" id = "FirstDate">
+								</div>
+								<div>
+									<p>Дата возвращения</p>
+									<input class = "date-form" type="date" id = "SecondDate">
+								</div>
+							</div>
+						
+						
+							<div class = "search-tourist-form">
+								<p>Туристы</p>
+								<select id = "selectPeople">
+									<option selected>1 чел.</option>
+									<option>2 чел.</option>
+									<option>3 чел.</option>
+									<option>4 чел.</option>
+									<option>5 чел.</option>
+									<option>6 чел.</option>
+									<option>7 чел.</option>
+								</select>
+							</div>
+							<div class = "search-button">
+								<button type="submit" id = "searchBtn">Найти</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</section>
+			<script>
+				document.getElementById('searchBtn').addEventListener('click', function() {
+    			// Получаем значения из полей select
+    			const select1Value = document.getElementById('selectWhere').value;
+    			const select2Value = document.getElementById('selectThere').value;
+    			const select3Value = document.getElementById('selectPeople').value;
+
+    			// Получаем значения из полей input type date
+    			const date1Value = document.getElementById('FirstDate').value;
+    			const date2Value = document.getElementById('SecondDate').value;
+
+    			// Формируем сообщение для alert
+    			const message = `
+      			Откуда: ${select1Value}
+        		Куда: ${select2Value}
+        		Дата полёта: ${date1Value}
+				Дата возвращения: ${date2Value}
+				Количество человек: ${select3Value}`;
+
+    			// Выводим сообщение в alert
+    			alert(message);
+				});
+			</script>
+
+			<section class = "banner">
+				<div class = "banner-container">
+					<div class = "image-container-left">
+						<a href = "tours.html">
+							<!-- <img src = "https://s01.cdn-pegast.net/get/f7/39/72/2bbcb12416ae486adfa2cc23b9330f1e005cfea01cdfac3329a442ef4a/banner_uae_B2C.jpg"/> -->
+							<img src = "images/banner_uae_B2C.jpg" />
+						</a>
+					</div>
+					<div class = "image-container-right">
+						<a href = "tours.html">
+							<img src = "https://s01.cdn-pegast.net/get/c5/d9/5a/65be574fc1a93056bdb3d9f9b324b83f177ce5cd342433cb8c2ddf272a/PEGAS-SELECT_360%D1%85192%282%29+%281%29.png"/>
+						</a>
+						<a href="payments.html">
+							<img src = "https://s01.cdn-pegast.net/get/7c/8d/44/9aa077ebff6dd834acb1de82f2396ecdab50f96263860db46c862d71a1/pay_360%D1%85192%282%29+%281%29.png"/>
+						</a>
+					</div>
+				</div>
+			</section>
+
+			<section>
+				<div>
+					<p style = "padding: 10px">
+						Более 45 стран мира для путешествий с вылетом из Москвы , Екатеринбурга, Казани, Санкт-Петербурга. 
+						Предлагаем все виды отдыха на лучших курортах мира. Организуем групповые, семейные, индивидуальные, корпоративные и VIP туры. Воспользуйтесь базой горящих туров от турагентства Пегас Туристик. 
+						Cервис турагентства Пегас Туристик позволяет купить и забронировать тур ОНЛАЙН.
+						Полетные программы туроператора Pegas Touristik : Турция, Доминикана, Египет, Куба, Таиланд, Греция, Кипр, 
+						Италия, Испания, Тунис, ОАЭ, Вьетнам,  Марокко, Мексика, Черногория, Мальдивы, Андорра. 
+					</p>
+				</div>
+			</section>
+
+			<section>
+				<div class = "advantages-container">
+					<img src = "images/advantages.png"/>
+				</div>
+			</section>
+			<section class = "reviews">
+				<h2>Отзывы наших клиентов</h2>
+				<div class = "reviews-list">
+					<div class = "review-obj">
+						<div class = "review-obj-name">
+							<p>Дмитрий, г. Ульяновск</p>
+							<p>Ездил в <a href = "#">Гагры</a></p>
+						</div>
+						<p>
+							Недавно вернулись из потрясающей поездки в Гагры, и эмоции до сих пор переполняют! 
+							Этот курорт удивляет своей красотой: величественные горы, 
+							лазурное море и зелень тропических растений создают атмосферу настоящего рая. 
+						</p>
+						<p>
+							Особую благодарность хочу выразить нашему туроператору, который организовал нашу поездку на высшем уровне. 
+							Все было продумано до мелочей: комфортный трансфер, уютные гостиницы и увлекательные экскурсии по самым живописным местам. 
+							Гид был настоящим знатоком региона, который делился интересными историями и местными традициями.
+						</p>
+						<p>
+							Если вы хотите насладиться великолепием природы и гостеприимством, 
+							Гагры — идеальный выбор, а с этим туроператором ваше путешествие станет поистине незабываемым!
+						</p>
+					</div>
+					<div class = "review-obj">
+						<div class = "review-obj-name">
+							<p>Иван, г.Москва</p>
+							<p>Ездил на <a href = "#">Бали</a></p>
+						</div>
+						<p>
+							Недавно вернулись с незабываемой поездки на Бали, и не могу не поделиться впечатлениями! 
+							Это место просто волшебное: белоснежные пляжи, зеленые рисовые террасы и удивительная культура. 
+						</p>
+						<p>
+							Особую благодарность хочу выразить нашему туроператору, который организовал все на высшем уровне. 
+							Каждая деталь была продумана до мелочей: от комфортного трансфера до увлекательных экскурсий. 
+							Гид был настоящим профессионалом, который делился не только знаниями, но и своей любовью к этому прекрасному острову. 
+						</p>
+						<p>
+							Если вы мечтаете о настоящем рае на земле, обязательно выбирайте Бали и доверяйтесь этому замечательному туроператору! 
+							Вы не пожалеете!
+						</p>
+					</div>
+					<div class = "review-obj">
+						<div class = "review-obj-name">
+							<p>Артемий, г.Стерлитамак</p>
+							<p>Ездил в <a href = "#">Анталию</a></p>
+						</div>
+						<p>
+							Недавно вернулись из великолепной поездки в Анталию, и впечатления просто потрясающие! Этот курорт поразил нас своей красотой: 
+							чистейшие пляжи, прозрачное море и живописные горные пейзажи создают атмосферу настоящего отдыха.
+						</p>
+						<p>
+							Особую благодарность хочу выразить нашему туроператору, который организовал все на высшем уровне. 
+							Каждая деталь была учтена: от комфортного трансфера до разнообразных экскурсий по историческим и культурным достопримечательностям. 
+							Гид был настоящим профессионалом, который делился интересными фактами и местными легендами.
+						</p>
+						<p>
+							Если вы мечтаете о солнечном отдыхе с комфортом и интересными приключениями, 
+							Анталия — идеальный выбор, а с этим туроператором ваше путешествие станет поистине незабываемым!
+						</p>
+					</div>
+					<div class = "review-form-container">
+						<h2>Остались впечатления? Оставьте свой отзыв</h2>
+						<div class = "review-form">
+							<form>
+								<input type = "text" placeholder = "Ваше имя"/>
+								<input type = "text" placeholder = "Откуда вы"/>
+								<input type = "text" placeholder = "Куда была путёвка"/>
+								<textarea placeholder = "Отзыв"></textarea>
+								<button class =>Отправить</button>
+							</form>
+						</div>
+					</div>
+				</div>
+			</section>
+		</div>
+	</body>
+
+	<footer>
+		<div class = "footer">
+			<div class = "footer-text">
+				PEGAS Touristik — ведущий оператор туристических услуг в РФ и СНГ. © 2024
+			</div>
+			<div class = "footer-text">
+				Использование текстов, фотографий и иных результатов интеллектуальной деятельности с сайта pegast.ru допускается 
+				только с письменного разрешения компании PEGAS Touristik.
+			</div>
+			<div class = "footer-label">
+				<a href="https://srtrf.ru/" target="_blank">
+					<img src="https://s01.cdn-pegast.net/get/75/59/1c/ee548320583a88939c056b5d24782fe28b179d3edfb57c92bbeac18ebc/srtsf+1.png">
+				</a>
+				<a href="https://ev.tourism.gov.ru/" target="_blank">
+					<img src="https://s01.cdn-pegast.net/get/15/5a/aa/581b88b090f0d7063c63aa9c7859f1c4698e2991175e4bb9fbd60e3531/electronic_booking.png">
+				</a>
+			</div>
+		</div>
+	</footer>
+</html>
