@@ -1,7 +1,10 @@
 <script setup lang="ts">
 const { user } = useUser()
 
-const { data: reviews, refresh } = await useFetch('/api/get-reviews')
+const { data: reviews, refresh } = useFetch('/api/get-reviews')
+const { data: arrivalCities } = useFetch('/api/get-cities', {
+  transform: cs => cs.filter(c => c.type === 'arrival'),
+})
 
 const createReviewError = ref<string | null>(null)
 const createReview = async (e: Event) => {
@@ -13,6 +16,7 @@ const createReview = async (e: Event) => {
       body: JSON.stringify(fd),
     })
     refresh()
+    ;(e.target as HTMLFormElement).reset()
   } catch (_e) {
     const e = _e as Error
     console.log(e)
@@ -73,7 +77,10 @@ const createReview = async (e: Event) => {
           <div class="review-obj-name">
             <p>{{ r.user.name }}, г. {{ r.originCity }}</p>
             <p>
-              Ездил в <NuxtLink to="#">г. {{ r.arrivalCity.name }}</NuxtLink>
+              Ездил в
+              <NuxtLink :to="`/tours?arrivalCity=${r.arrivalCity.name}`"
+                >г. {{ r.arrivalCity.name }}</NuxtLink
+              >
             </p>
           </div>
           <div class="" v-html="r.text"></div>
@@ -85,7 +92,14 @@ const createReview = async (e: Event) => {
             <form @submit.prevent="createReview">
               <input type="text" disabled :value="user.name" placeholder="Ваше имя" />
               <input type="text" name="originCity" placeholder="Откуда вы" />
-              <input type="text" name="arrivalCityId" placeholder="Куда была путёвка" />
+              <div class="">
+                <span>Куда была путёвка</span>
+                <select name="arrivalCityId" placeholder="Куда была путёвка">
+                  <option v-for="a in arrivalCities" :key="a.id" :value="a.id">
+                    {{ a.name }}
+                  </option>
+                </select>
+              </div>
               <textarea name="text" placeholder="Отзыв"></textarea>
               {{ createReviewError }}
               <button class>Отправиaть</button>
@@ -157,9 +171,7 @@ const createReview = async (e: Event) => {
   flex-direction: row;
   justify-content: space-between;
 
-  width: inherit;
   width: 100%;
-  height: 40%;
 
   background-color: inherit;
 }
@@ -175,7 +187,7 @@ h2 {
 }
 
 .review-form {
-  padding: 10px;
+  padding: 20px 40px;
   background-color: azure;
   border: 1px solid #4b4d4d;
   border-radius: 15px;
@@ -185,7 +197,7 @@ textarea {
   display: flex;
   flex-direction: column;
 
-  width: 80%;
+  width: 100%;
   height: 30px;
   margin: 15px auto;
 
@@ -200,6 +212,7 @@ textarea {
 }
 .review-form textarea {
   resize: none;
+  width: 100%;
   height: 100px;
 }
 .review-form button {

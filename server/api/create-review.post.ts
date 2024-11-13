@@ -5,12 +5,13 @@ import { db } from '../db'
 
 const reviewSchema = z.object({
   text: z.string(),
-  arrivalCityId: z.number(),
+  arrivalCityId: z.coerce.number(),
   originCity: z.string(),
 })
 
 export default defineEventHandler(async (event) => {
   const body = await readValidatedBody(event, reviewSchema.parse)
+
   const token = getCookie(event, 'token')
   if (!token) throw createError({
     statusCode: 401,
@@ -21,8 +22,9 @@ export default defineEventHandler(async (event) => {
     statusCode: 401,
     message: 'Неверный токен',
   })
-  const user = decoded.payload as User
+  const user = decoded.payload.user as User
 
+  console.log(body)
   const review = (await db.insert(reviews).values({
     arrivalCityId: body.arrivalCityId,
     originCity: body.originCity,

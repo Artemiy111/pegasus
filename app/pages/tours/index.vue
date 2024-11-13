@@ -22,10 +22,11 @@ const { data: tours, status } = await useFetch('/api/get-tours', {
                 <img :src="t.imageUrl" />
               </div>
               <div class="tour-obj-body">
-                <div class="tour-price-info">
-                  <p class="tour-price">От {{ t.flights.minPrice }}р</p>
-                  <p>Вылет с {{ t.flights.earliestDate }}</p>
+                <div v-if="'flights' in t" class="tour-price-info">
+                  <p class="tour-price">От {{ t.minPrice }}р</p>
+                  <p>Вылет с {{ t.earliestDepartureDate }}</p>
                 </div>
+                <div v-else class="tour-obj-body">Нет доступных рейсов</div>
                 <div class="tour-info">
                   <p class="tour-name">{{ t.name }}</p>
                   <p class="tour-location">
@@ -54,6 +55,7 @@ const { data: tours, status } = await useFetch('/api/get-tours', {
             </div>
           </NuxtLink>
         </div>
+        <div v-else class="">Не найдено подходящих туров</div>
       </template>
       <div v-else-if="status === 'pending'" class="">Загрузка...</div>
       <div v-else-if="status === 'error'" class="">Ошибка загрузки</div>

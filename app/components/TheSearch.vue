@@ -1,29 +1,40 @@
 <script setup lang="ts">
-const departures = ref([
-  'Москва',
-  'Санкт-Петербург',
-  'Казань',
-  'Севастополь',
-  'Нижний Новгород',
-  'Калуга',
-  'Великий Новгород',
-  'Ярославль',
-])
-const arrivals = ref(['Анталия', 'Пхукет', 'Бали', 'Гагры', 'Сочи', 'Анапа', 'Дубай'])
+// const departureCities = ref([
+//   'Любой',
+//   'Москва',
+//   'Санкт-Петербург',
+//   'Казань',
+//   'Севастополь',
+//   'Нижний Новгород',
+//   'Калуга',
+//   'Великий Новгород',
+//   'Ярославль',
+// ])
+// const arrivalCities = ref(['Любой', 'Анталия', 'Пхукет', 'Бали', 'Гагры', 'Сочи', 'Анапа', 'Дубай'])
 
-const departure = ref(departures.value[0]!)
+const { data } = await useAsyncData('cities', async () => {
+  const cities = await $fetch('/api/get-cities')
+  const departureCities = ['Любой', ...cities.filter(c => c.type === 'departure').map(c => c.name)]
+  const arrivalCities = ['Любой', ...cities.filter(c => c.type === 'arrival').map(c => c.name)]
+  return { departureCities, arrivalCities }
+})
+
+const departureCities = computed(() => data.value?.departureCities || [])
+const arrivalCities = computed(() => data.value?.arrivalCities || [])
+
+const departureCity = ref(departureCities.value[0]!)
 const departureDate = ref<string | null>(null)
-const arrival = ref(arrivals.value[0]!)
+const arrivalCity = ref(arrivalCities.value[0]!)
 const arrivalDate = ref<string | null>(null)
 const touristsOptions = ref([1, 2, 3, 4, 5, 6, 7])
 const tourists = ref<number>(1)
 
 const setSearchParams = () => {
   const query = useRoute().query
-  departureDate.value = query.departureDate?.toString() ?? null
-  arrivalDate.value = query.arrivalDate?.toString() ?? null
-  departure.value = query.departure?.toString() ?? departures.value[0]!
-  arrival.value = query.arrival?.toString() ?? arrivals.value[0]!
+  departureCity.value = query.departureCity?.toString() || departureCities.value[0]!
+  departureDate.value = query.departureDate?.toString() || null
+  arrivalCity.value = query.arrivalCity?.toString() || arrivalCities.value[0]!
+  arrivalDate.value = query.arrivalDate?.toString() || null
   tourists.value = query.tourists?.toString() ? Number(query.tourists.toString()) : 1
 }
 setSearchParams()
@@ -32,9 +43,9 @@ const search = async () => {
   navigateTo({
     path: '/tours',
     query: {
-      departure: departure.value,
-      arrival: arrival.value,
+      departureCity: departureCity.value === 'Любой' ? '' : departureCity.value,
       departureDate: departureDate.value,
+      arrivalCity: arrivalCity.value === 'Любой' ? '' : arrivalCity.value,
       arrivalDate: arrivalDate.value,
       tourists: tourists.value,
     },
@@ -50,22 +61,22 @@ const search = async () => {
           <div class="search-where-form">
             <div>
               <p>Откуда</p>
-              <select v-model="departure" class="search-where" id="selectWhere">
-                <option v-for="d in departures" :key="d" :value="d">
+              <select v-model="departureCity" class="search-where" id="selectWhere">
+                <option v-for="d in departureCities" :key="d" :value="d">
                   {{ d }}
                 </option>
               </select>
             </div>
             <div>
               <p>Куда</p>
-              <select v-model="arrival" class="search-where" id="selectThere">
-                <option v-for="a in arrivals" :key="a">{{ a }}</option>
+              <select v-model="arrivalCity" class="search-where" id="selectThere">
+                <option v-for="a in arrivalCities" :key="a">{{ a }}</option>
               </select>
             </div>
           </div>
           <div class="search-date-form">
             <div>
-              <p>Дата вылета</p>
+              <p>Дата вылета от</p>
               <input
                 :value="departureDate"
                 @change="(e) => {
@@ -79,7 +90,7 @@ const search = async () => {
               />
             </div>
             <div>
-              <p>Дата возвращения</p>
+              <p>Дата возвращения до</p>
               <input
                 :value="arrivalDate"
                 @change="(e) => {
@@ -97,7 +108,7 @@ const search = async () => {
           <div class="search-tourist-form">
             <p>Туристы</p>
             <select v-model="tourists" id="selectPeople">
-              <option v-for="n in touristsOptions" :key="n" :value="n">1 чел.</option>
+              <option v-for="n in touristsOptions" :key="n" :value="n">{{ n }} чел.</option>
             </select>
           </div>
           <div class="search-button">

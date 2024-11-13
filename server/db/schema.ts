@@ -22,8 +22,9 @@ export type CountryNew = typeof countries.$inferInsert
 
 export const cities = sqliteTable('cities', {
   id: int().primaryKey(),
-  name: text().notNull(),
+  name: text().unique().notNull(),
   countryId: int().references(() => countries.id).notNull(),
+  type: text({ 'enum': ['departure', 'arrival'] }).notNull()
 })
 
 export type City = typeof cities.$inferSelect

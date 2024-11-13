@@ -1,44 +1,8 @@
 <script setup lang="ts">
-import { eq, getTableColumns } from 'drizzle-orm'
-import { db } from '~~/server/db'
-import {
-  tours as toursTable,
-  flights as flightsTable,
-  cities as citiesTable,
-  countries as countriesTable,
-} from '~~/server/db/schema'
+const slug = computed(() => useRoute('tours-slug').params.slug)
 
-const slug = useRoute('tours-slug').params.slug
-
-const { data } = await useAsyncData('tour', () => {
-  const tourFlights = db
-    .select({
-      ...getTableColumns(flightsTable),
-      departureCity: citiesTable.name,
-      departureCountry: countriesTable.name,
-    })
-    .from(flightsTable)
-    .innerJoin(citiesTable, eq(flightsTable.departureCityId, citiesTable.id))
-    .innerJoin(countriesTable, eq(citiesTable.countryId, countriesTable.id))
-    .innerJoin(toursTable, eq(flightsTable.tourId, toursTable.id))
-    .where(eq(toursTable.slug, slug))
-  const tour = db
-    .select({
-      ...getTableColumns(toursTable),
-      city: citiesTable.name,
-      country: countriesTable.name,
-    })
-    .from(toursTable)
-    .innerJoin(citiesTable, eq(toursTable.cityId, citiesTable.id))
-    .innerJoin(countriesTable, eq(citiesTable.countryId, countriesTable.id))
-    .where(eq(toursTable.slug, slug))
-    .then(ts => ts[0])
-
-  return Promise.all([tourFlights, tour])
-})
-
-const tourFlights = computed(() => data.value?.[0] ?? undefined)
-const tour = computed(() => data.value?.[1] ?? undefined)
+const { data: tour } = await useFetch('/api/get-tour-by-slug', { query: { slug } })
+const { data: tourFlights } = await useFetch('/api/get-tour-flights-by-slug', { query: { slug } })
 </script>
 
 <template>
@@ -59,9 +23,10 @@ const tour = computed(() => data.value?.[1] ?? undefined)
           <div v-for="flight in tourFlights" :key="flight.id" class="flight-object">
             <div class="flight-object-information">
               <p>
+                {{ flight }}
                 <strong>
-                  {{ flight.departureCountry }}, {{ flight.departureCity }} - {{ tour.country }},
-                  {{ tour.city }}</strong
+                  {{ flight.departureCountryName }}, {{ flight.departureCityName }} -
+                  {{ tour.arrivalCountryName }}, {{ flight.arrivalCityName }}</strong
                 >
               </p>
               <p style="font-size: 14px">{{ flight.departureDate }} - {{ flight.arrivalDate }}</p>
@@ -115,7 +80,7 @@ const tour = computed(() => data.value?.[1] ?? undefined)
 }
 .flight-object {
   display: flex;
-  flex-direction: row;
+  justify-content: space-between;
 
   width: 100%;
   margin: 15px;
@@ -124,13 +89,7 @@ const tour = computed(() => data.value?.[1] ?? undefined)
   background-color: rgb(219 219 219);
   border-radius: 15px;
 }
-.flight-object-information {
-  width: 50%;
-  text-align: left;
-}
 .flight-object-price {
-  width: 100%;
-
   font-size: 19px;
   font-weight: bold;
   color: rgb(3 157 3);
