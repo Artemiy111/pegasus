@@ -1,27 +1,24 @@
 <script setup lang="ts">
-import { getTableColumns, eq } from 'drizzle-orm'
-import { db } from '~~/server/db'
-import {
-  cities as citiesTable,
-  reviews as reviewsTable,
-  users as usersTable,
-} from '~~/server/db/schema'
+const { user } = useUser()
 
-const { data: reviews } = await useAsyncData('reviews', () => {
-  return db
-    .select({
-      ...getTableColumns(reviewsTable),
-      user: {
-        name: usersTable.name,
-      },
-      arrivalCity: {
-        name: citiesTable.name,
-      },
+const { data: reviews, refresh } = await useFetch('/api/get-reviews')
+
+const createReviewError = ref<string | null>(null)
+const createReview = async (e: Event) => {
+  const fd = Object.fromEntries(new FormData(e.target as HTMLFormElement))
+  createReviewError.value = null
+  try {
+    const review = await $fetch('/api/create-review', {
+      method: 'POST',
+      body: JSON.stringify(fd),
     })
-    .from(reviewsTable)
-    .innerJoin(citiesTable, eq(reviewsTable.arrivalCityId, citiesTable.id))
-    .innerJoin(usersTable, eq(reviewsTable.userId, usersTable.id))
-})
+    refresh()
+  } catch (_e) {
+    const e = _e as Error
+    console.log(e)
+    createReviewError.value = e.message
+  }
+}
 </script>
 
 <template>
@@ -82,14 +79,15 @@ const { data: reviews } = await useAsyncData('reviews', () => {
           <div class="" v-html="r.text"></div>
         </div>
 
-        <div class="review-form-container">
+        <div v-if="user" class="review-form-container">
           <h2>Остались впечатления? Оставьте свой отзыв</h2>
           <div class="review-form">
-            <form>
-              <input type="text" placeholder="Ваше имя" />
-              <input type="text" placeholder="Откуда вы" />
-              <input type="text" placeholder="Куда была путёвка" />
-              <textarea placeholder="Отзыв"></textarea>
+            <form @submit.prevent="createReview">
+              <input type="text" disabled :value="user.name" placeholder="Ваше имя" />
+              <input type="text" name="originCity" placeholder="Откуда вы" />
+              <input type="text" name="arrivalCityId" placeholder="Куда была путёвка" />
+              <textarea name="text" placeholder="Отзыв"></textarea>
+              {{ createReviewError }}
               <button class>Отправиaть</button>
             </form>
           </div>
@@ -115,10 +113,7 @@ const { data: reviews } = await useAsyncData('reviews', () => {
   height: inherit;
   border-radius: 25px;
 }
-/* .banner-container .image-container-left img {
-  height: inherit;
-  width: inherit;
-} */
+
 .banner-container .image-container-right {
   display: flex;
   flex-direction: column;
@@ -154,7 +149,6 @@ const { data: reviews } = await useAsyncData('reviews', () => {
   border-radius: 15px;
 }
 .review-obj p {
-  /* margin: 0px; */
   padding: 5px 5px 5px 5px;
   font-size: 17px;
 }
@@ -179,7 +173,7 @@ const { data: reviews } = await useAsyncData('reviews', () => {
 h2 {
   text-align: center;
 }
-/* Форма обратной связи на главной странице */
+
 .review-form {
   padding: 10px;
   background-color: azure;

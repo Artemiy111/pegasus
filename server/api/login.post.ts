@@ -19,7 +19,6 @@ export default defineEventHandler(async (event) => {
     message: 'Неверный логин или пароль',
   })
 
-  console.log(999)
   if (!(await verify(user.passwordHash, body.password))) throw createError({
     statusCode: 401,
     message: 'Неверный логин или пароль',
@@ -33,7 +32,6 @@ export default defineEventHandler(async (event) => {
     .setExpirationTime('1h')
     .encode()
 
-  console.log(token)
   setCookie(event, 'token', token)
 
   return {

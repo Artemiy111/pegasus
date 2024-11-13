@@ -18,11 +18,10 @@ const { data } = await useAsyncData('tour', () => {
       departureCountry: countriesTable.name,
     })
     .from(flightsTable)
-    .innerJoin(toursTable, eq(flightsTable.tourId, toursTable.id))
     .innerJoin(citiesTable, eq(flightsTable.departureCityId, citiesTable.id))
     .innerJoin(countriesTable, eq(citiesTable.countryId, countriesTable.id))
-    .where(eq(flightsTable.tourId, toursTable.id))
-
+    .innerJoin(toursTable, eq(flightsTable.tourId, toursTable.id))
+    .where(eq(toursTable.slug, slug))
   const tour = db
     .select({
       ...getTableColumns(toursTable),

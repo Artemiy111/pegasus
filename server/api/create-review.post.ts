@@ -22,7 +22,6 @@ export default defineEventHandler(async (event) => {
     message: 'Неверный токен',
   })
   const user = decoded.payload as User
-  console.log(user)
 
   const review = (await db.insert(reviews).values({
     arrivalCityId: body.arrivalCityId,
@@ -30,8 +29,6 @@ export default defineEventHandler(async (event) => {
     text: body.text,
     userId: user.id,
   }).returning())[0]
-
-  console.log(review)
 
   return review
 })

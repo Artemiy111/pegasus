@@ -9,55 +9,95 @@ const departures = ref([
   'Великий Новгород',
   'Ярославль',
 ])
-
 const arrivals = ref(['Анталия', 'Пхукет', 'Бали', 'Гагры', 'Сочи', 'Анапа', 'Дубай'])
 
 const departure = ref(departures.value[0]!)
+const departureDate = ref<string | null>(null)
 const arrival = ref(arrivals.value[0]!)
+const arrivalDate = ref<string | null>(null)
+const touristsOptions = ref([1, 2, 3, 4, 5, 6, 7])
+const tourists = ref<number>(1)
+
+const setSearchParams = () => {
+  const query = useRoute().query
+  departureDate.value = query.departureDate?.toString() ?? null
+  arrivalDate.value = query.arrivalDate?.toString() ?? null
+  departure.value = query.departure?.toString() ?? departures.value[0]!
+  arrival.value = query.arrival?.toString() ?? arrivals.value[0]!
+  tourists.value = query.tourists?.toString() ? Number(query.tourists.toString()) : 1
+}
+setSearchParams()
+
+const search = async () => {
+  navigateTo({
+    path: '/tours',
+    query: {
+      departure: departure.value,
+      arrival: arrival.value,
+      departureDate: departureDate.value,
+      arrivalDate: arrivalDate.value,
+      tourists: tourists.value,
+    },
+  })
+}
 </script>
 
 <template>
   <section>
     <div class="search">
-      <form>
+      <form @submit.prevent="search">
         <div class="search-container">
           <div class="search-where-form">
             <div>
               <p>Откуда</p>
-              <select class="search-where" id="selectWhere">
-                <option v-for="d in departures" :key="d" :value="d" :selected="d === departure">
+              <select v-model="departure" class="search-where" id="selectWhere">
+                <option v-for="d in departures" :key="d" :value="d">
                   {{ d }}
                 </option>
               </select>
             </div>
             <div>
               <p>Куда</p>
-              <select class="search-where" id="selectThere">
-                <option v-for="a in arrivals" :key="a" :selected="a === arrival">{{ a }}</option>
+              <select v-model="arrival" class="search-where" id="selectThere">
+                <option v-for="a in arrivals" :key="a">{{ a }}</option>
               </select>
             </div>
           </div>
           <div class="search-date-form">
             <div>
               <p>Дата вылета</p>
-              <input class="date-form" type="date" id="FirstDate" />
+              <input
+                :value="departureDate"
+                @change="(e) => {
+                const value = (e.target as HTMLInputElement).value
+                if (!value) departureDate = null
+                else departureDate = value
+              }"
+                class="date-form"
+                type="date"
+                id="FirstDate"
+              />
             </div>
             <div>
               <p>Дата возвращения</p>
-              <input class="date-form" type="date" id="SecondDate" />
+              <input
+                :value="arrivalDate"
+                @change="(e) => {
+                const value = (e.target as HTMLInputElement).value
+                if (!value) arrivalDate = null
+                else arrivalDate = value
+              }"
+                class="date-form"
+                type="date"
+                id="SecondDate"
+              />
             </div>
           </div>
 
           <div class="search-tourist-form">
             <p>Туристы</p>
-            <select id="selectPeople">
-              <option selected>1 чел.</option>
-              <option>2 чел.</option>
-              <option>3 чел.</option>
-              <option>4 чел.</option>
-              <option>5 чел.</option>
-              <option>6 чел.</option>
-              <option>7 чел.</option>
+            <select v-model="tourists" id="selectPeople">
+              <option v-for="n in touristsOptions" :key="n" :value="n">1 чел.</option>
             </select>
           </div>
           <div class="search-button">

@@ -43,7 +43,6 @@ export default defineEventHandler(async (event) => {
     .setExpirationTime('1h')
     .encode()
 
-  console.log(token)
   setCookie(event, 'token', token)
 
   return {
