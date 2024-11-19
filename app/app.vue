@@ -25,6 +25,7 @@ useHead({
     <TheHeader />
     <NuxtPage />
     <TheFooter />
+    <CartButton />
   </div>
 </template>
 

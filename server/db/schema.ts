@@ -1,4 +1,4 @@
-import { relations } from 'drizzle-orm'
+import { relations, sql } from 'drizzle-orm'
 import { sqliteTable, int, text } from 'drizzle-orm/sqlite-core'
 
 export const users = sqliteTable('users', {
@@ -11,6 +11,7 @@ export const users = sqliteTable('users', {
 
 export type User = typeof users.$inferSelect
 export type UserNew = typeof users.$inferInsert
+export type UserDto = Omit<User, 'passwordHash'>
 
 export const countries = sqliteTable('countries', {
   id: int().primaryKey(),
@@ -49,6 +50,7 @@ export const flights = sqliteTable('flights', {
   departureDate: text({ length: 10 }).notNull(),
   arrivalDate: text({ length: 10 }).notNull(),
   price: int().notNull(),
+  priceDiscounted: int(),
 })
 
 export type Flight = typeof flights.$inferSelect
@@ -64,6 +66,38 @@ export const reviews = sqliteTable('reviews', {
 
 export type Review = typeof reviews.$inferSelect
 export type ReviewNew = typeof reviews.$inferInsert
+
+export const orderItems = sqliteTable('order_items', {
+  id: int().primaryKey(),
+  userId: int().references(() => users.id).notNull(),
+  flightId: int().references(() => flights.id).notNull(),
+  orderId: int().references(() => orders.id).notNull(),
+  price: int().notNull(),
+  priceDiscounted: int(),
+  quantity: int().notNull().default(1),
+})
+
+export type OrderItem = typeof orderItems.$inferSelect
+export type OrderItemNew = typeof orderItems.$inferInsert
+
+export const orders = sqliteTable('orders', {
+  id: int().primaryKey(),
+  userId: int().references(() => users.id).notNull(),
+  createdAt: int({ mode: 'timestamp' }).notNull().default(sql`(unixepoch())`),
+})
+
+export type Order = typeof orders.$inferSelect
+export type OrderNew = typeof orders.$inferInsert
+
+export const cartItems = sqliteTable('cart_items', {
+  id: int().primaryKey(),
+  userId: int().references(() => users.id).notNull(),
+  flightId: int().references(() => flights.id).notNull(),
+  quantity: int().notNull().default(1),
+})
+
+export type CartItem = typeof cartItems.$inferSelect
+export type CartItemNew = typeof cartItems.$inferInsert
 
 export const userRelations = relations(users, ({ many }) => ({
   reviews: many(reviews),
@@ -109,4 +143,31 @@ export const reviewRelations = relations(reviews, ({ one, many }) => ({
     fields: [reviews.arrivalCityId],
     references: [cities.id],
   })
+}))
+
+export const orderItemRelations = relations(orderItems, ({ one, many }) => ({
+  user: one(users, {
+    fields: [orderItems.userId],
+    references: [users.id],
+  }),
+  flight: one(flights, {
+    fields: [orderItems.flightId],
+    references: [flights.id],
+  }),
+}))
+
+export const orderRelations = relations(orders, ({ one, many }) => ({
+  user: one(users, {
+    fields: [orders.userId],
+    references: [users.id],
+  }),
+  items: many(orderItems),
+}))
+
+export const cartRelations = relations(cartItems, ({ one, many }) => ({
+  user: one(users, {
+    fields: [cartItems.userId],
+    references: [users.id],
+  }),
+  flights: many(flights),
 }))

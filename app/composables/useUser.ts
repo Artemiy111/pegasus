@@ -1,7 +1,5 @@
 import { UnsecuredJWT } from 'jose'
-import type { User } from '~~/server/db/schema'
-
-type UserDto = Omit<User, 'passwordHash'>
+import { type UserDto } from '~~/server/db/schema'
 
 export const useUser = () => {
   const token = useCookie('token')

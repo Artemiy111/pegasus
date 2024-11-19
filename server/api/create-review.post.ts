@@ -1,7 +1,7 @@
 import { z } from 'zod'
-import { UnsecuredJWT } from 'jose'
 import { reviews, User } from '../db/schema'
 import { db } from '../db'
+import { assertAuthed } from '../lib/assert-authed'
 
 const reviewSchema = z.object({
   text: z.string(),
@@ -10,19 +10,8 @@ const reviewSchema = z.object({
 })
 
 export default defineEventHandler(async (event) => {
+  const { user } = assertAuthed(event)
   const body = await readValidatedBody(event, reviewSchema.parse)
-
-  const token = getCookie(event, 'token')
-  if (!token) throw createError({
-    statusCode: 401,
-    message: 'Необходимо авторизоваться',
-  })
-  const decoded = UnsecuredJWT.decode(token)
-  if (!decoded) throw createError({
-    statusCode: 401,
-    message: 'Неверный токен',
-  })
-  const user = decoded.payload.user as User
 
   console.log(body)
   const review = (await db.insert(reviews).values({
