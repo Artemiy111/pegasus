@@ -1,10 +1,14 @@
 <script setup lang="ts">
+import * as carousel from '@zag-js/carousel'
+import { normalizeProps, useMachine } from '@zag-js/vue'
+
 const { user } = useUser()
 
 const { data: reviews, refresh } = useFetch('/api/get-reviews')
 const { data: arrivalCities } = useFetch('/api/get-cities', {
   transform: cs => cs.filter(c => c.type === 'arrival'),
 })
+const { data: tours } = useFetch('/api/get-tours')
 
 const createReviewError = ref<string | null>(null)
 const createReview = async (e: Event) => {
@@ -23,6 +27,9 @@ const createReview = async (e: Event) => {
     createReviewError.value = e.message
   }
 }
+
+const [state, send] = useMachine(carousel.machine({ id: '1' }))
+const api = computed(() => carousel.connect(state.value, send, normalizeProps))
 </script>
 
 <template>
@@ -32,9 +39,28 @@ const createReview = async (e: Event) => {
     <section class="banner">
       <div class="banner-container">
         <div class="image-container-left">
-          <NuxtLink to="/tours">
-            <img src="/images/banner_uae_B2C.jpg" />
-          </NuxtLink>
+          <div class="carousel" v-bind="api.getRootProps()">
+            <button class="carousel-button carousel-button-prev" v-bind="api.getPrevTriggerProps()">
+              <IconsLeftArrow />
+            </button>
+            <button class="carousel-button carousel-button-next" v-bind="api.getNextTriggerProps()">
+              <IconsRightArrow />
+            </button>
+            <div v-bind="api.getViewportProps()" class="">
+              <div v-bind="api.getItemGroupProps()" class="">
+                <NuxtLink
+                  v-for="(item, index) in tours || []"
+                  :key="item.id"
+                  v-bind="api.getItemProps({ index })"
+                  :to="`/tours/${item.slug}`"
+                  class="carousel-item"
+                >
+                  <p class="carousel-item-title">{{ item.name }}</p>
+                  <img class="carousel-item-image" :src="item.imageUrl" :alt="item.name" />
+                </NuxtLink>
+              </div>
+            </div>
+          </div>
         </div>
         <div class="image-container-right">
           <NuxtLink to="/tours">
@@ -113,34 +139,83 @@ const createReview = async (e: Event) => {
 
 <style scoped>
 .banner-container {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: space-between;
-
-  width: inherit;
+  display: grid;
+  grid-template-columns: 700px 1fr;
+  gap: 15px;
   height: 350px;
+  width: inherit;
 }
 .banner-container .image-container-left {
   overflow: hidden;
-  width: 666px;
   height: inherit;
   border-radius: 25px;
 }
 
 .banner-container .image-container-right {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  gap: 15px;
 
-  width: 340px;
-  height: 100%;
+  & img {
+    padding: 0;
+    margin: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
 }
 .banner-container .image-container-right a {
   overflow: hidden;
   width: inherit;
-  height: 48%;
   border-radius: 25px;
+}
+
+.carousel {
+  position: relative;
+}
+
+.carousel-button {
+  position: absolute;
+  top: 50%;
+  translate: 0px -50%;
+  /* width: 100%; */
+  z-index: 10;
+
+  border: none;
+  background: #fff;
+  height: 50px;
+  width: 50px;
+  cursor: pointer;
+  border-radius: 100px;
+}
+
+.carousel-button-prev {
+  left: 20px;
+}
+
+.carousel-button-next {
+  right: 20px;
+}
+
+.carousel-item {
+  position: relative;
+  /* width: 100%; */
+  height: 350px;
+}
+
+.carousel-item-title {
+  position: absolute;
+  top: 20px;
+  left: 30px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #ffffff;
+}
+
+.carousel-item-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .reviews-list {
@@ -246,63 +321,5 @@ textarea {
 .advantages-container img {
   width: 1018px;
   height: 520px;
-}
-
-.callback-form-container {
-  width: 50%;
-  margin: 10px auto;
-}
-
-.callback-form {
-  padding: 10px;
-  background-color: azure;
-  border: 1px solid #4b4d4d;
-  border-radius: 15px;
-}
-.callback-form input,
-textarea {
-  display: flex;
-  flex-direction: column;
-
-  width: 80%;
-  height: 30px;
-  margin: 15px auto;
-
-  font-size: 15px;
-  color: #000000;
-  text-align: center;
-
-  border: 2px solid #a3a4a4;
-  border-radius: 5px;
-
-  transition: all 0.3s ease-in-out;
-}
-.callback-form textarea {
-  resize: none;
-  height: 100px;
-}
-.callback-form button {
-  display: flex;
-  align-items: center;
-
-  width: 100px;
-  height: 40px;
-  margin: 0px auto;
-
-  font-size: 16px;
-  font-weight: bold;
-  color: #ffffff;
-
-  background-color: #60b822;
-  border: none;
-  border-radius: 17px;
-
-  transition: all 0.3s ease-in-out;
-}
-.callback-form button:hover {
-  box-shadow: 0 4px 10px rgb(0 0 0 / 0.1);
-}
-.callback-form button:active {
-  background-color: #448119;
 }
 </style>

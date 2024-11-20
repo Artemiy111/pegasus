@@ -7,6 +7,6 @@ body {
 }
 
 .body-container {
-  width: min(100% - 2 * 40px, 1100px);
+  width: min(100% - 2 * 40px, 1018px);
   margin-inline: auto;
 }

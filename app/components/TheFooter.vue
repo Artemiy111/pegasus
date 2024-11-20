@@ -7,6 +7,9 @@
       <div class="footer-text">
         Использование текстов, фотографий и иных результатов интеллектуальной деятельности с сайта
         pegast.ru допускается только с письменного разрешения компании PEGAS Touristik.
+        <NuxtLink target="_blank" to="/Положение о защите персональных данных.pdf"
+          >Положение о защите персональных данных</NuxtLink
+        >
       </div>
       <div class="footer-label">
         <NuxtLink to="https://srtrf.ru/" external target="_blank">

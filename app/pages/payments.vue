@@ -46,22 +46,7 @@
         ></iframe>
       </div>
     </section>
-    <section>
-      <div class="callback-form-container">
-        <h2 style="text-align: center">
-          Свяжитесь с нами и мы вас проконсультируем по вопросам оплаты
-        </h2>
-        <div class="callback-form">
-          <form>
-            <input type="text" placeholder="Ваше имя" />
-            <input type="text" placeholder="Номер телефона" />
-            <input type="mail" placeholder="Почта" />
-            <textarea placeholder="Ваш вопрос"></textarea>
-            <button>Отправить</button>
-          </form>
-        </div>
-      </div>
-    </section>
+    <Callback />
   </div>
 </template>
 
