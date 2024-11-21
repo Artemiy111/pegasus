@@ -52,7 +52,9 @@ const createOrder = async () => {
       <p>
         Сумма позиций с скидкой: <strong>{{ data?.total.totalPriceWithDiscount }}р</strong>
       </p>
-      <button class="buy-button" @click="createOrder">Купить</button>
+      <button class="buy-button" :disabled="cartItems.length === 0" @click="createOrder">
+        Купить
+      </button>
     </div>
   </main>
 </template>
@@ -97,5 +99,11 @@ img {
   border-radius: 10px;
   color: rgb(12 8 248);
   cursor: pointer;
+
+  &:disabled {
+    background: #e0e0e0;
+    color: #b2c3ff;
+    cursor: not-allowed;
+  }
 }
 </style>
