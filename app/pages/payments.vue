@@ -46,7 +46,6 @@
         ></iframe>
       </div>
     </section>
-    <Callback />
   </div>
 </template>
 

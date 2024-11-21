@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import CartIcon from './icons/CartIcon.vue'
 
+const { user } = useUser()
 const { data } = await useFetch('/api/get-cart-items', { key: 'get-cart-items' })
 const totalQuantity = computed(() => data.value?.total.totalQuantity)
 </script>
 
 <template>
-  <NuxtLink class="cart-button" to="/cart">
+  <NuxtLink v-if="user" class="cart-button" to="/cart">
     <p v-if="totalQuantity" class="total-quantity">{{ totalQuantity }}</p>
     <CartIcon />
   </NuxtLink>

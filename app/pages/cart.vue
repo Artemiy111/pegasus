@@ -2,6 +2,11 @@
 const { data } = useFetch('/api/get-cart-items', { key: 'get-cart-items' })
 const cartItems = computed(() => data.value?.cartItems || [])
 
+const { user } = useUser()
+watchEffect(() => {
+  if (!user.value) navigateTo('/lk')
+})
+
 const updateCartItem = async (flightId: number, quantity: number) => {
   await $fetch('/api/update-cart-item', {
     method: 'POST',
@@ -26,7 +31,13 @@ const createOrder = async () => {
       <div v-for="item in cartItems" :key="item.id" class="cart-item">
         <img :src="item.tour.imageUrl" />
         <p>{{ item.tour.name }}</p>
-        <p>{{ item.flight.departureDate }} - {{ item.flight.arrivalDate }}</p>
+        <div class="cart-item-info">
+          <span>{{ item.flight.departureDate }} — {{ item.flight.arrivalDate }}</span>
+          <span
+            >{{ item.departureCountry }}, {{ item.departureCity }} — {{ item.arrivalCountry }},
+            {{ item.arrivalCity }}</span
+          >
+        </div>
         <div class="cart-item-quantity">
           <button @click="updateCartItem(item.flightId, item.quantity - 1)">-</button>
           <p>{{ item.quantity }}</p>
@@ -55,11 +66,18 @@ const createOrder = async () => {
 
 .cart-item {
   display: grid;
-  grid-template-columns: auto 1fr 1fr 1fr;
+  grid-template-columns: auto 300px 1fr max-content;
   align-items: center;
   column-gap: 20px;
   row-gap: 30px;
 }
+
+.cart-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
 .cart-item-quantity {
   display: flex;
   gap: 10px;
@@ -77,7 +95,7 @@ img {
   padding-inline: 20px;
   padding-block: 10px;
   border-radius: 10px;
-  color: rgb(12, 8, 248);
+  color: rgb(12 8 248);
   cursor: pointer;
 }
 </style>
